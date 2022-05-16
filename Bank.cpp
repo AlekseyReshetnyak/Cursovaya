@@ -128,8 +128,10 @@ std::string Account_of_money::GetAccount_number(bool flag)
 	}
 }
 
+//Доделать*****************************
 void Deposit_account::percentage()
 {
+	
 }
 
 //Конструктор депозитного счёта
@@ -145,6 +147,7 @@ Deposit_account::Deposit_account()
 	delete buff;
 }
 
+//Взять деньги с депозитного счёта
 void Deposit_account::take_money(double a)
 {
 	if (Amount_of_money_in_account >= a)
@@ -153,6 +156,7 @@ void Deposit_account::take_money(double a)
 		std::cout << "Not enough money!\n";
 }
 
+//Доделать****************************
 void Credit_account::percentage()
 {
 }
@@ -169,6 +173,7 @@ Credit_account::Credit_account()
 	delete buff;
 }
 
+//Взять деньги с кредитного счёта
 void Credit_account::take_money(double a)
 {
 	Amount_of_money_in_account -= a;

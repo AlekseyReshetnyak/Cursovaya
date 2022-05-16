@@ -163,16 +163,20 @@ public:
 
 //Класс "депозитный счёт"
 class Deposit_account : public Percentage_account {
-public:
+private:
 	void percentage();
+	Deposit_account(int);
+public:
 	Deposit_account();
 	void take_money(double);
 };
 
 //Класс "кредитный счёт"
 class Credit_account : public Percentage_account {
-public:
+private:
 	void percentage();
+	Credit_account(int);
+public:
 	Credit_account();
 	void take_money(double);
 };
