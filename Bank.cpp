@@ -56,6 +56,7 @@ void Personal_Account::Create_Current_account()
 {
 	Current_account* nw = new Current_account;
 	Case_my_money[nw->GetAccount_number(true)] = nw;
+	Consructor_code[Number_of_code] = nw->GetAccount_number(true);
 	Number_of_code += 1;
 }
 
@@ -63,6 +64,7 @@ void Personal_Account::Create_Deposit_account()
 {
 	Deposit_account* nw = new Deposit_account;
 	Case_my_money[nw->GetAccount_number(true)] = nw;
+	Consructor_code[Number_of_code] = nw->GetAccount_number(true);
 	Number_of_code += 1;
 }
 
@@ -70,6 +72,7 @@ void Personal_Account::Create_Credit_account()
 {
 	Credit_account* nw = new Credit_account;
 	Case_my_money[nw->GetAccount_number(true)] = nw;
+	Consructor_code[Number_of_code] = nw->GetAccount_number(true);
 	Number_of_code += 1;
 }
 

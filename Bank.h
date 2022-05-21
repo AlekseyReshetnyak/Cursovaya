@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <ctime>
+#include <fstream>
 
 //Минимум из двух
 template<class Type>
@@ -99,6 +100,8 @@ inline char* TakeTime() {
 		buf[i] = buffer[i];
 	return buf;
 };
+
+//void Save_project();
 
 class Account_of_money;
 class Current_account;
