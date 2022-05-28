@@ -101,8 +101,6 @@ inline char* TakeTime() {
 	return buf;
 };
 
-//void Save_project();
-
 class Account_of_money;
 class Current_account;
 class Percentage_account;
@@ -117,10 +115,14 @@ private:
 	std::string Personal_Number = "";
 	std::map <int, std::string> Consructor_code;
 	int Number_of_code;
+	//void SetAll(std::string, std::string, std::string, int);
 protected:
 	std::map <std::string, Account_of_money*> Case_my_money;
 public:
 	Personal_Account(std::string, std::string);
+	Personal_Account();
+	void Save_personal_account();
+	void Load_personal_account();
 	void GetName();
 	void GetSurname();
 	void GetPersonal_Number();
@@ -139,12 +141,14 @@ protected:
 	double Amount_of_money_in_account;
 	std::string Account_number;
 public:
+	void Set_Account_number(std::string, std::string);
 	Account_of_money();
-	void view_money();
+	double view_money(bool);
 	void put_money(double);
 	virtual void take_money(double) = 0;
 	virtual void percentage() = 0;
 	std::string GetAccount_number(bool);
+	//~Account_of_money();
 };
 
 //Класс "текущий счёт"
@@ -154,6 +158,8 @@ private:
 public:
 	Current_account();
 	void take_money(double);
+	//~Current_account();
+	//Current_account& operator=(const Account_of_money*);
 };
 
 //Абстрактный класс для процентных счетов
@@ -162,24 +168,26 @@ protected:
 	int date_of_accrual;
 public:
 	virtual void percentage() = 0;
+	//~Percentage_account();
 };
 
 //Класс "депозитный счёт"
-class Deposit_account : public Percentage_account {
+class Deposit_account : public Account_of_money {
 private:
 	void percentage();
-	Deposit_account(int);
 public:
 	Deposit_account();
 	void take_money(double);
+	//~Deposit_account();
 };
 
 //Класс "кредитный счёт"
 class Credit_account : public Percentage_account {
 private:
 	void percentage();
-	Credit_account(int);
 public:
+	//Credit_account(const Credit_account&);
 	Credit_account();
 	void take_money(double);
+	//~Credit_account();
 };
