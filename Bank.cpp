@@ -33,7 +33,10 @@ Personal_Account::Personal_Account()
 
 void Personal_Account::Save_personal_account()
 {
-	std::ofstream out("Main_save.txt", std::ios::binary), out_map("Mape_save.txt", std::ios::binary);
+	std::string Main_file_name, Map_file_name;
+	Main_file_name = Name + "_" + Surname + "_" + "Main_save.txt";
+	Map_file_name = Name + "_" + Surname + "_" + "Mape_save.txt";
+	std::ofstream out(Main_file_name, std::ios::binary), out_map(Map_file_name, std::ios::binary);
 	std::map <int, std::string> Consructor_code_new;
 	std::map <std::string, Account_of_money*> Case_my_money_new;
 	std::string code = Name + " " + Surname + " " + Personal_Number + " " + std::to_string(Number_of_code);
@@ -55,9 +58,12 @@ void Personal_Account::Save_personal_account()
 	}
 }
 
-void Personal_Account::Load_personal_account()
+void Personal_Account::Load_personal_account(std::string Nam, std::string Surnam)
 {
-	std::ifstream in("Main_save.txt", std::ios::binary), in_map("Mape_save.txt", std::ios::binary);
+	std::string Main_file_name, Map_file_name;
+	Main_file_name = Nam + "_" + Surnam + "_" + "Main_save.txt";
+	Map_file_name = Nam + "_" + Surnam + "_" + "Mape_save.txt";
+	std::ifstream in(Main_file_name, std::ios::binary), in_map(Map_file_name, std::ios::binary);
 	std::string temporary_str;
 	in >> temporary_str;
 	int k = 0;

@@ -116,13 +116,12 @@ private:
 	std::map <int, std::string> Consructor_code;
 	int Number_of_code;
 	//void SetAll(std::string, std::string, std::string, int);
-protected:
 	std::map <std::string, Account_of_money*> Case_my_money;
 public:
 	Personal_Account(std::string, std::string);
 	Personal_Account();
 	void Save_personal_account();
-	void Load_personal_account();
+	void Load_personal_account(std::string, std::string);
 	void GetName();
 	void GetSurname();
 	void GetPersonal_Number();
