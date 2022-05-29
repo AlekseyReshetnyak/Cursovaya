@@ -58,7 +58,7 @@ void Personal_Account::Save_personal_account()
 	}
 }
 
-void Personal_Account::Load_personal_account(std::string Nam, std::string Surnam)
+bool Personal_Account::Load_personal_account(std::string Nam, std::string Surnam)
 {
 	std::string Main_file_name, Map_file_name;
 	Main_file_name = Nam + "_" + Surnam + "_" + "Main_save.txt";
@@ -66,82 +66,87 @@ void Personal_Account::Load_personal_account(std::string Nam, std::string Surnam
 	std::ifstream in(Main_file_name, std::ios::binary), in_map(Map_file_name, std::ios::binary);
 	std::string temporary_str;
 	in >> temporary_str;
-	int k = 0;
-	while (std::getline(in, temporary_str, ' ')) {
-		if (k == 0) {
-			Name += temporary_str;
-			k += 1;
+	if (in.is_open()) {
+		int k = 0;
+		while (std::getline(in, temporary_str, ' ')) {
+			if (k == 0) {
+				Name += temporary_str;
+				k += 1;
+			}
+			else if (k == 1) {
+				Surname += temporary_str;
+				k += 1;
+			}
+			else if (k == 2) {
+				Personal_Number += temporary_str;
+				k += 1;
+			}
+			else
+				Number_of_code = atoi(temporary_str.c_str());
+		};
+		in.close();
+		temporary_str = "";
+		if (in_map.is_open()) {
+			k = 0;
+			while (std::getline(in_map, temporary_str)) {
+				std::string code = temporary_str.substr(0, 5), money = temporary_str.substr(5);
+				this->Consructor_code[k] = code;
+				if (code[0] == '0') {
+					Current_account* nw = new Current_account;
+					nw->Set_Account_number("@0-1-0@", code);
+					nw->put_money(atof(money.c_str()));
+					this->Case_my_money[code] = nw;
+				}
+				else if (code[0] == '1') {
+					Deposit_account* nw = new Deposit_account;
+					nw->Set_Account_number("@0-1-0@", code);
+					nw->put_money(atof(money.c_str()));
+					this->Case_my_money[code] = nw;
+				}
+				else if (code[0] == '2') {
+					Credit_account* nw = new Credit_account;
+					nw->Set_Account_number("@0-1-0@", code);
+					nw->put_money(atof(money.c_str()));
+					this->Case_my_money[code] = nw;
+				}
+				else {
+					std::cout << "ERROR";
+				}
+				k += 1;
+			}
+			/*for (int i = 0; i < this->Number_of_code; i++) {
+				in.read((char*)&temporary_str, sizeof(std::string));
+				std::string code = temporary_str.substr(0, 5), money = temporary_str.substr(5);
+				this->Consructor_code[i] = code;
+				if (code[0] == '0') {
+					Current_account* nw = new Current_account;
+					nw->Set_Account_number("@0-1-0@", code);
+					nw->put_money(atof(money.c_str()));
+					this->Case_my_money[code] = nw;
+				}
+				else if (code[0] == '1') {
+					Deposit_account* nw = new Deposit_account;
+					nw->Set_Account_number("@0-1-0@", code);
+					nw->put_money(atof(money.c_str()));
+					this->Case_my_money[code] = nw;
+				}
+				else if (code[0] == '2') {
+					Credit_account* nw = new Credit_account;
+					nw->Set_Account_number("@0-1-0@", code);
+					nw->put_money(atof(money.c_str()));
+					this->Case_my_money[code] = nw;
+				}
+				else {
+					std::cout << "ERROR";
+				}
+			}*/
 		}
-		else if (k == 1) {
-			Surname += temporary_str;
-			k += 1;
-		}
-		else if (k == 2) {
-			Personal_Number += temporary_str;
-			k += 1;
-		}
-		else 
-		Number_of_code = atoi(temporary_str.c_str());
-	};
-	in.close();
-	temporary_str = "";
-	if (in_map.is_open()) {
-		k = 0;
-		while (std::getline(in_map, temporary_str)) {
-			std::string code = temporary_str.substr(0, 5), money = temporary_str.substr(5);
-			this->Consructor_code[k] = code;
-			if (code[0] == '0') {
-				Current_account* nw = new Current_account;
-				nw->Set_Account_number("@0-1-0@", code);
-				nw->put_money(atof(money.c_str()));
-				this->Case_my_money[code] = nw;
-			}
-			else if (code[0] == '1') {
-				Deposit_account* nw = new Deposit_account;
-				nw->Set_Account_number("@0-1-0@", code);
-				nw->put_money(atof(money.c_str()));
-				this->Case_my_money[code] = nw;
-			}
-			else if (code[0] == '2') {
-				Credit_account* nw = new Credit_account;
-				nw->Set_Account_number("@0-1-0@", code);
-				nw->put_money(atof(money.c_str()));
-				this->Case_my_money[code] = nw;
-			}
-			else {
-				std::cout << "ERROR";
-			}
-			k += 1;
-		}
-		/*for (int i = 0; i < this->Number_of_code; i++) {
-			in.read((char*)&temporary_str, sizeof(std::string));
-			std::string code = temporary_str.substr(0, 5), money = temporary_str.substr(5);
-			this->Consructor_code[i] = code;
-			if (code[0] == '0') {
-				Current_account* nw = new Current_account;
-				nw->Set_Account_number("@0-1-0@", code);
-				nw->put_money(atof(money.c_str()));
-				this->Case_my_money[code] = nw;
-			}
-			else if (code[0] == '1') {
-				Deposit_account* nw = new Deposit_account;
-				nw->Set_Account_number("@0-1-0@", code);
-				nw->put_money(atof(money.c_str()));
-				this->Case_my_money[code] = nw;
-			}
-			else if (code[0] == '2') {
-				Credit_account* nw = new Credit_account;
-				nw->Set_Account_number("@0-1-0@", code);
-				nw->put_money(atof(money.c_str()));
-				this->Case_my_money[code] = nw;
-			}
-			else {
-				std::cout << "ERROR";
-			}
-		}*/
+		else
+			in_map.close();
+		return true;
 	}
 	else
-		in.close();
+		return false;
 }
 
 //Получение имени польователя аккаунта
@@ -237,12 +242,6 @@ double Account_of_money::view_money(bool flag)
 	}
 }
 
-//Положить деньги на счёт
-void Account_of_money::put_money(double size)
-{
-	Amount_of_money_in_account += size;
-}
-
 //Конструктор текущего счёта
 Current_account::Current_account()
 {
@@ -261,6 +260,11 @@ void Current_account::take_money(double a)
 		Amount_of_money_in_account -= a;
 	else
 		std::cout << "Not enough money!\n";
+}
+
+void Current_account::put_money(double size)
+{
+	Amount_of_money_in_account += size;
 }
 
 //Current_account::~Current_account()
@@ -293,7 +297,7 @@ std::string Account_of_money::GetAccount_number(bool flag)
 //Доделать*****************************
 void Deposit_account::percentage()
 {
-	
+	Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 16, previous_date);
 }
 
 //Конструктор депозитного счёта
@@ -304,8 +308,7 @@ Deposit_account::Deposit_account()
 	for (int i = 0; i < 5; i++)
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
-	char new_new_buffer[] = { buff[8], buff[9], buff[5], buff[6], buff[20], buff[21], buff[22], buff[23]};
-	//date_of_accrual = (int)new_new_buffer;
+	date_of_accrual = time(NULL);
 	delete buff;
 }
 
@@ -318,14 +321,20 @@ void Deposit_account::take_money(double a)
 		std::cout << "Not enough money!\n";
 }
 
+void Deposit_account::put_money(double size)
+{
+	Amount_of_money_in_account += size;
+}
+
 //Deposit_account::~Deposit_account()
 //{
 //	std::cout << "Depos\n";
 //}
 
-//Доделать****************************
+//Начисление процентов на кредитный счёт
 void Credit_account::percentage()
 {
+	Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 17, previous_date);
 }
 
 //Конструктор кредитного счёта
@@ -344,11 +353,18 @@ Credit_account::Credit_account()
 void Credit_account::take_money(double a)
 {
 	Amount_of_money_in_account -= a;
-	char* buff = TakeTime();
-	char new_new_buffer[] = { buff[8], buff[9], buff[5], buff[6], buff[20], buff[21], buff[22], buff[23] };
-	if (Amount_of_money_in_account < 0)
-		date_of_accrual = (int)new_new_buffer;
-	delete buff;
+	if (Amount_of_money_in_account < 0 && date_of_accrual == 0)
+		date_of_accrual = time(NULL);
+}
+
+void Credit_account::put_money(double size)
+{
+	if (Amount_of_money_in_account < 0 && Amount_of_money_in_account < size) {
+		Amount_of_money_in_account += size;
+		date_of_accrual = 0;
+	}
+	else
+		Amount_of_money_in_account += size;
 }
 
 //Credit_account::~Credit_account()
@@ -360,3 +376,11 @@ void Credit_account::take_money(double a)
 //{
 //	std::cout << "Peracc\n";
 //}
+
+int Interest_calculation(int money, int percent, int previous_date)
+{
+	if (time(NULL) - previous_date > 2592000)
+		for (int i = 1; i <= int((time(NULL) - previous_date) / 2592000); i++)
+			money += money * percent / 100 * 30 / 365;
+	return money;
+}

@@ -26,15 +26,18 @@ Type max(Type left, Type right) {
 
 //Получение текущего локального времени
 inline char* TakeTime() {
-	char buffer[32], month[3];
+	char buffer[32], month[3] = "";
 	time_t seconds = time(NULL);
 	tm timeinfo{};
 	localtime_s(&timeinfo, &seconds);
 	asctime_s(buffer, 32, &timeinfo);
-	month[0] = buffer[4];
+	/*month[0] = buffer[4];
 	month[1] = buffer[5];
-	month[2] = buffer[6];
-	std::string month_str = month;
+	month[2] = buffer[6];*/
+	std::string month_str;
+	month_str += buffer[4];
+	month_str += buffer[5];
+	month_str += buffer[6];
 	if (month_str == "Jan") {
 		buffer[4] = '0';
 		buffer[5] = '0';
@@ -101,6 +104,16 @@ inline char* TakeTime() {
 	return buf;
 };
 
+//Возвращает день:месяц:год в типе int
+//inline int Ret_date_of_accrual(char* buff)
+//{
+//	std::string str;
+//	str += buff[8]; str += buff[9]; str += buff[5]; str += buff[6]; str += buff[20]; str += buff[21]; str += buff[22]; str += buff[23];
+//	return atoi(str.c_str());
+//}
+
+int Interest_calculation(int, int, int);
+
 class Account_of_money;
 class Current_account;
 class Percentage_account;
@@ -121,7 +134,7 @@ public:
 	Personal_Account(std::string, std::string);
 	Personal_Account();
 	void Save_personal_account();
-	void Load_personal_account(std::string, std::string);
+	bool Load_personal_account(std::string, std::string);
 	void GetName();
 	void GetSurname();
 	void GetPersonal_Number();
@@ -143,7 +156,7 @@ public:
 	void Set_Account_number(std::string, std::string);
 	Account_of_money();
 	double view_money(bool);
-	void put_money(double);
+	virtual void put_money(double) = 0;
 	virtual void take_money(double) = 0;
 	virtual void percentage() = 0;
 	std::string GetAccount_number(bool);
@@ -157,6 +170,7 @@ private:
 public:
 	Current_account();
 	void take_money(double);
+	void put_money(double);
 	//~Current_account();
 	//Current_account& operator=(const Account_of_money*);
 };
@@ -164,6 +178,7 @@ public:
 //Абстрактный класс для процентных счетов
 class Percentage_account : public Account_of_money {
 protected:
+	int previous_date;
 	int date_of_accrual;
 public:
 	virtual void percentage() = 0;
@@ -171,12 +186,13 @@ public:
 };
 
 //Класс "депозитный счёт"
-class Deposit_account : public Account_of_money {
+class Deposit_account : public Percentage_account {
 private:
 	void percentage();
 public:
 	Deposit_account();
 	void take_money(double);
+	void put_money(double);
 	//~Deposit_account();
 };
 
@@ -188,5 +204,6 @@ public:
 	//Credit_account(const Credit_account&);
 	Credit_account();
 	void take_money(double);
+	void put_money(double);
 	//~Credit_account();
 };
