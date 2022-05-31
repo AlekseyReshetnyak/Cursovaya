@@ -133,17 +133,21 @@ private:
 public:
 	Personal_Account(std::string, std::string);
 	Personal_Account();
+	bool Existence_of_an_account(std::string);
 	void Save_personal_account();
 	bool Load_personal_account(std::string, std::string);
-	void GetName();
-	void GetSurname();
-	void GetPersonal_Number();
-	void GetMoney_on_account(std::string);
+	std::string GetName();
+	std::string GetSurname();
+	std::string GetPersonal_Number();
+	int GetNumber_of_Code();
+	double GetMoney_on_account(std::string);
 	void PutMoney_on_account(std::string, double);
 	void TakeMoney_on_account(std::string, double);
 	void Create_Current_account();
 	void Create_Deposit_account();
 	void Create_Credit_account();
+	std::string* GetNumbers_of_account_money();
+	Personal_Account& operator=(Personal_Account&);
 	~Personal_Account();
 };
 

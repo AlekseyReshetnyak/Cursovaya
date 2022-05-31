@@ -31,6 +31,14 @@ Personal_Account::Personal_Account()
 	Personal_Number = "";
 }
 
+bool Personal_Account::Existence_of_an_account(std::string numb)
+{
+	for (int i = 0; i < Number_of_code; i++)
+		if (Consructor_code[i] == numb)
+			return false;
+	return true;
+}
+
 void Personal_Account::Save_personal_account()
 {
 	std::string Main_file_name, Map_file_name;
@@ -65,7 +73,6 @@ bool Personal_Account::Load_personal_account(std::string Nam, std::string Surnam
 	Map_file_name = Nam + "_" + Surnam + "_" + "Mape_save.txt";
 	std::ifstream in(Main_file_name, std::ios::binary), in_map(Map_file_name, std::ios::binary);
 	std::string temporary_str;
-	in >> temporary_str;
 	if (in.is_open()) {
 		int k = 0;
 		while (std::getline(in, temporary_str, ' ')) {
@@ -150,27 +157,32 @@ bool Personal_Account::Load_personal_account(std::string Nam, std::string Surnam
 }
 
 //Получение имени польователя аккаунта
-void Personal_Account::GetName()
+std::string Personal_Account::GetName()
 {
-	std::cout << Name << std::endl;
+	return Name;
 }
 
 //Получение фамилии пользователя аккаунта
-void Personal_Account::GetSurname()
+std::string Personal_Account::GetSurname()
 {
-	std::cout << Surname << std::endl;
+	return Surname;
 }
 
 //Получение номера аккаунта
-void Personal_Account::GetPersonal_Number()
+std::string Personal_Account::GetPersonal_Number()
 {
-	std::cout << Personal_Number << std::endl;
+	return Personal_Number;
+}
+
+int Personal_Account::GetNumber_of_Code()
+{
+	return Number_of_code;
 }
 
 //Узнать сколько денег на счету с заданным номером
-void Personal_Account::GetMoney_on_account(std::string number)
+double Personal_Account::GetMoney_on_account(std::string number)
 {
-	Case_my_money[number]->view_money(false);
+	return Case_my_money[number]->view_money(true);
 }
 
 //Положить деньги на счёт с заданным номером
@@ -209,6 +221,46 @@ void Personal_Account::Create_Credit_account()
 	Case_my_money[nw->GetAccount_number(true)] = nw;
 	Consructor_code[Number_of_code] = nw->GetAccount_number(true);
 	Number_of_code += 1;
+}
+
+std::string* Personal_Account::GetNumbers_of_account_money()
+{
+	std::string* arr_string_number = new std::string[Number_of_code];
+	for (int i = 0; i < Number_of_code; i++)
+		arr_string_number[i] = Consructor_code[i];
+	return arr_string_number;
+}
+
+Personal_Account& Personal_Account::operator=(Personal_Account& now)
+{
+	Name = now.Name;
+	Surname = now.Surname;
+	Personal_Number = now.Personal_Number;
+	Number_of_code = now.Number_of_code;
+	Consructor_code = now.Consructor_code;
+	std::string code;
+	for (int i = 0; i < Number_of_code; i++) {
+		code = now.Consructor_code[i];
+		if (code[0] == '0') {
+			Current_account* nw = new Current_account;
+			nw->Set_Account_number("@0-1-0@", code);
+			nw->put_money(now.Case_my_money[now.Consructor_code[i]]->view_money(false));
+			Case_my_money[code] = nw;
+		}
+		else if (code[0] == '1') {
+			Deposit_account* nw = new Deposit_account;
+			nw->Set_Account_number("@0-1-0@", code);
+			nw->put_money(now.Case_my_money[now.Consructor_code[i]]->view_money(false));
+			Case_my_money[code] = nw;
+		}
+		else if (code[0] == '2') {
+			Credit_account* nw = new Credit_account;
+			nw->Set_Account_number("@0-1-0@", code);
+			nw->put_money(now.Case_my_money[now.Consructor_code[i]]->view_money(false));
+			Case_my_money[code] = nw;
+		}
+	}
+	return *this;
 }
 
 Personal_Account::~Personal_Account()
