@@ -160,6 +160,8 @@ public:
 	void Set_Account_number(std::string, std::string);
 	Account_of_money();
 	double view_money(bool);
+	virtual void SetPrevious_date() {};
+	virtual int GetDate_of_accrual() = 0;
 	virtual void put_money(double) = 0;
 	virtual void take_money(double) = 0;
 	virtual void percentage() = 0;
@@ -170,7 +172,9 @@ public:
 //Класс "текущий счёт"
 class Current_account : public Account_of_money {
 private:
+	void SetPrevious_date() {};
 	void percentage() {};
+	int GetDate_of_accrual() { return 0; };
 public:
 	Current_account();
 	void take_money(double);
@@ -182,9 +186,10 @@ public:
 //Абстрактный класс для процентных счетов
 class Percentage_account : public Account_of_money {
 protected:
-	int previous_date;
 	int date_of_accrual;
 public:
+	virtual void SetPrevious_date(std::string, int) {};
+	int GetDate_of_accrual();
 	virtual void percentage() = 0;
 	//~Percentage_account();
 };
@@ -194,6 +199,7 @@ class Deposit_account : public Percentage_account {
 private:
 	void percentage();
 public:
+	void SetPrevious_date(std::string, int);
 	Deposit_account();
 	void take_money(double);
 	void put_money(double);
@@ -205,6 +211,7 @@ class Credit_account : public Percentage_account {
 private:
 	void percentage();
 public:
+	void SetPrevious_date(std::string, int);
 	//Credit_account(const Credit_account&);
 	Credit_account();
 	void take_money(double);

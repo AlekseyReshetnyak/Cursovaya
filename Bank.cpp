@@ -55,10 +55,15 @@ void Personal_Account::Save_personal_account()
 	out.close();
 	if (!Consructor_code.empty()) {
 		for (int i = 0; i < Consructor_code.size(); i++) {
-			code = Consructor_code[i] + std::to_string(Case_my_money[Consructor_code[i]]->view_money(true));
+			if (Consructor_code[i][0] == '0') {
+				code = Consructor_code[i] + std::to_string(Case_my_money[Consructor_code[i]]->view_money(true));
+				out_map << code << std::endl;
+			}
+			else {
+				code = Consructor_code[i] + std::to_string(Case_my_money[Consructor_code[i]]->GetDate_of_accrual()) + std::to_string(Case_my_money[Consructor_code[i]]->view_money(true));
+				out_map << code << std::endl;
+			}
 			//std::cout << code << std::endl;
-			out_map << code << std::endl;
-			//out_map.write((char*)&code, sizeof(code));
 		}
 	}
 	else {
@@ -96,24 +101,29 @@ bool Personal_Account::Load_personal_account(std::string Nam, std::string Surnam
 		if (in_map.is_open()) {
 			k = 0;
 			while (std::getline(in_map, temporary_str)) {
-				std::string code = temporary_str.substr(0, 5), money = temporary_str.substr(5);
+				std::string code = temporary_str.substr(0, 5);
 				this->Consructor_code[k] = code;
 				if (code[0] == '0') {
+					std::string money = temporary_str.substr(5);
 					Current_account* nw = new Current_account;
 					nw->Set_Account_number("@0-1-0@", code);
 					nw->put_money(atof(money.c_str()));
 					this->Case_my_money[code] = nw;
 				}
 				else if (code[0] == '1') {
+					std::string date = temporary_str.substr(5, 10), money = temporary_str.substr(15);
 					Deposit_account* nw = new Deposit_account;
 					nw->Set_Account_number("@0-1-0@", code);
 					nw->put_money(atof(money.c_str()));
+					nw->SetPrevious_date("@@02-11-20", atof(date.c_str()));
 					this->Case_my_money[code] = nw;
 				}
 				else if (code[0] == '2') {
+					std::string date = temporary_str.substr(5, 10), money = temporary_str.substr(15);
 					Credit_account* nw = new Credit_account;
 					nw->Set_Account_number("@0-1-0@", code);
 					nw->put_money(atof(money.c_str()));
+					nw->SetPrevious_date("@@02-11-20", atof(date.c_str()));
 					this->Case_my_money[code] = nw;
 				}
 				else {
@@ -298,7 +308,9 @@ double Account_of_money::view_money(bool flag)
 Current_account::Current_account()
 {
 	char* buff = TakeTime();
-	char new_buffer[8] = {'0', buff[8] , buff[9] , /*buff[17] , buff[18] ,*/ buff[22] ,buff[23]};
+	if (buff[8] == ' ')
+		buff[8] = '0';
+	char new_buffer[8] = {'0', buff[8] , buff[9] ,buff[17] , buff[18] , buff[22] ,buff[23]};
 	for (int i = 0; i < 5; i++)
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
@@ -346,17 +358,25 @@ std::string Account_of_money::GetAccount_number(bool flag)
 //	std::cout << "AccMoney\n";
 //}
 
+void Deposit_account::SetPrevious_date(std::string code, int date)
+{
+	if (code == "@@02-11-20@@")
+		date_of_accrual = date;
+}
+
 //Доделать*****************************
 void Deposit_account::percentage()
 {
-	Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 16, previous_date);
+	Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 16, date_of_accrual);
 }
 
 //Конструктор депозитного счёта
 Deposit_account::Deposit_account()
 {
 	char* buff = TakeTime();
-	char new_buffer[8] = { '1', buff[8] , buff[9] ,/* buff[17] , buff[18] ,*/ buff[22] ,buff[23]};
+	if (buff[8] == ' ')
+		buff[8] = '0';
+	char new_buffer[8] = { '1', buff[8] , buff[9] ,buff[17] , buff[18] , buff[22] ,buff[23]};
 	for (int i = 0; i < 5; i++)
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
@@ -383,17 +403,25 @@ void Deposit_account::put_money(double size)
 //	std::cout << "Depos\n";
 //}
 
+void Credit_account::SetPrevious_date(std::string code, int date)
+{
+	if (code == "@@02-11-20@@")
+		date_of_accrual = date;
+}
+
 //Начисление процентов на кредитный счёт
 void Credit_account::percentage()
 {
-	Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 17, previous_date);
+	Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 17, date_of_accrual);
 }
 
 //Конструктор кредитного счёта
 Credit_account::Credit_account()
 {
 	char* buff = TakeTime();
-	char new_buffer[8] = { '2', buff[8] , buff[9] ,/* buff[17] , buff[18] ,*/ buff[22] ,buff[23]};
+	if (buff[8] == ' ')
+		buff[8] = '0';
+	char new_buffer[8] = { '2', buff[8] , buff[9] ,buff[17] , buff[18] , buff[22] ,buff[23]};
 	for (int i = 0; i < 7; i++)
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
@@ -435,4 +463,9 @@ int Interest_calculation(int money, int percent, int previous_date)
 		for (int i = 1; i <= int((time(NULL) - previous_date) / 2592000); i++)
 			money += money * percent / 100 * 30 / 365;
 	return money;
+}
+
+int Percentage_account::GetDate_of_accrual()
+{
+	return date_of_accrual;
 }

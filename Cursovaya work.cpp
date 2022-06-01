@@ -65,6 +65,8 @@ int main()
 				}
 			}
 			Bool_flag_first = Mi.Load_personal_account(Name, Surname);
+			if (!Bool_flag_first)
+				std::cout << "Данный пользователь не зарегистрирован.\n";
 		}
 	}
 	else {
@@ -216,7 +218,7 @@ int main()
 				break;
 			}
 			default:
-				std::cout << "ERROR";
+				std::cout << "ERROR case4";
 				return -1;
 			}
 			std::cout << "Операция выполнена\n";
@@ -224,6 +226,7 @@ int main()
 			break;
 		}
 		case '5': {
+			system("cls");
 			std::cout << "Имя: " << Mi.GetName() << "\nФамилия: " << Mi.GetSurname() << "\nНомер аккаунта: " << Mi.GetPersonal_Number() << std::endl;
 			std::string* arr_string = Mi.GetNumbers_of_account_money();
 			for (int i = 0; i < Mi.GetNumber_of_Code(); i++) {
@@ -235,7 +238,7 @@ int main()
 					std::cout << "    Кредитный счёт:\n        Номер счёта: " << arr_string[i] << "\n        Денег на счету: " << abs(Mi.GetMoney_on_account(arr_string[i])) << std::endl;
 			}
 			std::cout << "Операция выполнена\n";
-			Sleep(3000);
+			system("pause");
 			break;
 		}
 		case '6': {
@@ -243,30 +246,14 @@ int main()
 			break;
 		}
 		default: {
-			std::cout << "ERROR";
+			std::cout << "ERROR switch";
 			return -1;
 		}
 		}
 	}
 
+	Mi.Save_personal_account();
 	system("cls");
-	std::cout << "Досвидания\nУдачи\nХорошего дня\nПриятного времяпрепровождения\nПриятного аппетита\nЖелаю счастья\nБог с вами" << std::endl;
+	std::cout << "Досвидания\nУдачи\nХорошего дня\nПриятного времяпрепровождения\nПриятного аппетита\nЖелаю счастья\n" << std::endl;
 	Sleep(6000);
-
-	//std::cout << Name << " " << Surname << " ";
-	/*Personal_Account NotMi{};
-	NotMi.Load_personal_account("Any", "Ruf");
-	NotMi.GetMoney_on_account("12822");
-	NotMi.GetMoney_on_account("02822");*/
-	/*Personal_Account Mi{ "Any", "Ruf" };
-	Mi.GetPersonal_Number();
-	Mi.Create_Current_account();
-	Mi.Create_Deposit_account();
-	Mi.GetMoney_on_account("12822");
-	Mi.PutMoney_on_account("02822", 20000);
-	Mi.PutMoney_on_account("12822", 300000);
-	Mi.TakeMoney_on_account("02822", 10000);
-	Mi.GetMoney_on_account("12822");
-	Mi.GetMoney_on_account("02822");
-	Mi.Save_personal_account();*/
 }
