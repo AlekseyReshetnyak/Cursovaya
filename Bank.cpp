@@ -171,32 +171,6 @@ bool Personal_Account::Load_personal_account(std::string Nam, std::string Surnam
 				}
 				k += 1;
 			}
-			/*for (int i = 0; i < this->Number_of_code; i++) {
-				in.read((char*)&temporary_str, sizeof(std::string));
-				std::string code = temporary_str.substr(0, 5), money = temporary_str.substr(5);
-				this->Consructor_code[i] = code;
-				if (code[0] == '0') {
-					Current_account* nw = new Current_account;
-					nw->Set_Account_number("@0-1-0@", code);
-					nw->put_money(atof(money.c_str()));
-					this->Case_my_money[code] = nw;
-				}
-				else if (code[0] == '1') {
-					Deposit_account* nw = new Deposit_account;
-					nw->Set_Account_number("@0-1-0@", code);
-					nw->put_money(atof(money.c_str()));
-					this->Case_my_money[code] = nw;
-				}
-				else if (code[0] == '2') {
-					Credit_account* nw = new Credit_account;
-					nw->Set_Account_number("@0-1-0@", code);
-					nw->put_money(atof(money.c_str()));
-					this->Case_my_money[code] = nw;
-				}
-				else {
-					std::cout << "ERROR";
-				}
-			}*/
 		}
 		else
 			in_map.close();
