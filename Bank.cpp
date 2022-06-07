@@ -1,12 +1,44 @@
 #include "Bank.h"
 
-//void Personal_Account::SetAll(std::string a1, std::string a2, std::string a3, int b)
-//{
-//	Name = a1;
-//	Surname = a2;
-//	Personal_Number = a3;
-//	Number_of_code = b;
-//}
+
+void Personal_Account::Fill_history(std::string text)
+{
+	if (History[7] != "") {
+		std::string dop;
+		for (int i = 0; i < 8; i++) {
+			dop = History[i];
+			History[i] = text;
+			text = dop;
+		}
+	}
+	else
+		for (int i = 0; i < 8; i++)
+			if (History[i] == "") {
+				History[i] = text;
+				break;
+			}
+}
+
+void Personal_Account::Out_history()
+{
+	system("cls");
+	if (History[0] == "")
+		std::cout << "История пуста\n";
+	else {
+		for (int i = 0; i < 8; i++)
+			if (History[i] != "")
+				std::cout << History[i] << std::endl;
+			else
+				break;
+	}
+	
+}
+
+void Personal_Account::Perevod(std::string numb1, std::string numb2, double mon)
+{
+	std::string vr = "Перевод с" + numb1 + " на " + numb2 + ": " + std::to_string(mon);
+	Fill_history(vr);
+}
 
 //Конструктор персонального аккаунта
 Personal_Account::Personal_Account(std::string name, std::string surname)
@@ -21,6 +53,8 @@ Personal_Account::Personal_Account(std::string name, std::string surname)
 		for (int i = Personal_Number.length(); i < 12; i++)
 			Personal_Number += "0";
 	Number_of_code = 0;
+	for (int i = 0; i < 8; i++)
+		History[i] = "";
 }
 
 Personal_Account::Personal_Account()
@@ -29,6 +63,8 @@ Personal_Account::Personal_Account()
 	Name = "";
 	Surname = "";
 	Personal_Number = "";
+	for (int i = 0; i < 8; i++)
+		History[i] = "";
 }
 
 bool Personal_Account::Existence_of_an_account(std::string numb)
@@ -48,9 +84,7 @@ void Personal_Account::Save_personal_account()
 	std::map <int, std::string> Consructor_code_new;
 	std::map <std::string, Account_of_money*> Case_my_money_new;
 	std::string code = Name + " " + Surname + " " + Personal_Number + " " + std::to_string(Number_of_code);
-	//std::cout << code << std::endl;
 	out << code;
-	//out.write((char*)&code, sizeof(code));
 
 	out.close();
 	if (!Consructor_code.empty()) {
@@ -59,11 +93,17 @@ void Personal_Account::Save_personal_account()
 				code = Consructor_code[i] + std::to_string(Case_my_money[Consructor_code[i]]->view_money(true));
 				out_map << code << std::endl;
 			}
-			else {
+			else if (Consructor_code[i][0] == '1') {
 				code = Consructor_code[i] + std::to_string(Case_my_money[Consructor_code[i]]->GetDate_of_accrual()) + std::to_string(Case_my_money[Consructor_code[i]]->view_money(true));
 				out_map << code << std::endl;
 			}
-			//std::cout << code << std::endl;
+			else {
+				if (Case_my_money[Consructor_code[i]]->GetDate_of_accrual() != 0)
+					code = Consructor_code[i] + std::to_string(Case_my_money[Consructor_code[i]]->GetDate_of_accrual()) + std::to_string(Case_my_money[Consructor_code[i]]->view_money(true));
+				else
+					code = Consructor_code[i] + "0000000000" + std::to_string(Case_my_money[Consructor_code[i]]->view_money(true));
+				out_map << code << std::endl;
+			}
 		}
 	}
 	else {
@@ -101,29 +141,29 @@ bool Personal_Account::Load_personal_account(std::string Nam, std::string Surnam
 		if (in_map.is_open()) {
 			k = 0;
 			while (std::getline(in_map, temporary_str)) {
-				std::string code = temporary_str.substr(0, 5);
+				std::string code = temporary_str.substr(0, 7);
 				this->Consructor_code[k] = code;
 				if (code[0] == '0') {
-					std::string money = temporary_str.substr(5);
+					std::string money = temporary_str.substr(7);
 					Current_account* nw = new Current_account;
 					nw->Set_Account_number("@0-1-0@", code);
 					nw->put_money(atof(money.c_str()));
 					this->Case_my_money[code] = nw;
 				}
 				else if (code[0] == '1') {
-					std::string date = temporary_str.substr(5, 10), money = temporary_str.substr(15);
+					std::string date = temporary_str.substr(7, 10), money = temporary_str.substr(17);
 					Deposit_account* nw = new Deposit_account;
 					nw->Set_Account_number("@0-1-0@", code);
 					nw->put_money(atof(money.c_str()));
-					nw->SetPrevious_date("@@02-11-20", atof(date.c_str()));
+					nw->SetPrevious_date("@@02-11-20@@", atof(date.c_str()));
 					this->Case_my_money[code] = nw;
 				}
 				else if (code[0] == '2') {
-					std::string date = temporary_str.substr(5, 10), money = temporary_str.substr(15);
+					std::string date = temporary_str.substr(7, 10), money = temporary_str.substr(17);
 					Credit_account* nw = new Credit_account;
 					nw->Set_Account_number("@0-1-0@", code);
 					nw->put_money(atof(money.c_str()));
-					nw->SetPrevious_date("@@02-11-20", atof(date.c_str()));
+					nw->SetPrevious_date("@@02-11-20@@", atof(date.c_str()));
 					this->Case_my_money[code] = nw;
 				}
 				else {
@@ -198,16 +238,21 @@ double Personal_Account::GetMoney_on_account(std::string number)
 //Положить деньги на счёт с заданным номером
 void Personal_Account::PutMoney_on_account(std::string number, double money)
 {
+	std::cout << money;
 	Case_my_money[number]->put_money(money);
+	std::string vr = "Пополнение на счет " + number + ": " + std::to_string(money);
+	Fill_history(vr);
 }
 
 //Взять деньги со счёта с заданным номером
 void Personal_Account::TakeMoney_on_account(std::string number, double money)
 {
 	Case_my_money[number]->take_money(money);
+	std::string vr = "Снятие со счета " + number + ": " + std::to_string(money);
+	Fill_history(vr);
 }
 
-//Создать текущий счёт
+//Создать счета
 void Personal_Account::Create_Current_account()
 {
 	Current_account* nw = new Current_account;
@@ -311,13 +356,13 @@ Current_account::Current_account()
 	if (buff[8] == ' ')
 		buff[8] = '0';
 	char new_buffer[8] = {'0', buff[8] , buff[9] ,buff[17] , buff[18] , buff[22] ,buff[23]};
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 7; i++)
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
 	delete buff;
 }
 
-//Взять деньги со сщёта
+//Взять деньги со счёта
 void Current_account::take_money(double a)
 {
 	if (Amount_of_money_in_account >= a)
@@ -330,17 +375,6 @@ void Current_account::put_money(double size)
 {
 	Amount_of_money_in_account += size;
 }
-
-//Current_account::~Current_account()
-//{
-//	std::cout << "Curracc";
-//}
-
-//Current_account& Current_account::operator=(const Account_of_money* a)
-//{
-//	this->Account_number = a->;
-//
-//}
 
 //Получить номер счёта
 std::string Account_of_money::GetAccount_number(bool flag)
@@ -362,12 +396,16 @@ void Deposit_account::SetPrevious_date(std::string code, int date)
 {
 	if (code == "@@02-11-20@@")
 		date_of_accrual = date;
+	percentage();
 }
 
 //Доделать*****************************
 void Deposit_account::percentage()
 {
-	Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 16, date_of_accrual);
+	if (time(NULL) - date_of_accrual > 2592000) {
+		Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 16, date_of_accrual);
+		date_of_accrual += int((time(NULL) - date_of_accrual) / 2592000) * 2592000;
+	}
 }
 
 //Конструктор депозитного счёта
@@ -377,7 +415,7 @@ Deposit_account::Deposit_account()
 	if (buff[8] == ' ')
 		buff[8] = '0';
 	char new_buffer[8] = { '1', buff[8] , buff[9] ,buff[17] , buff[18] , buff[22] ,buff[23]};
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 7; i++)
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
 	date_of_accrual = time(NULL);
@@ -407,12 +445,16 @@ void Credit_account::SetPrevious_date(std::string code, int date)
 {
 	if (code == "@@02-11-20@@")
 		date_of_accrual = date;
+	percentage();
 }
 
 //Начисление процентов на кредитный счёт
 void Credit_account::percentage()
 {
-	Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 17, date_of_accrual);
+	if (time(NULL) - date_of_accrual > 2592000) {
+		Amount_of_money_in_account = Interest_calculation(Amount_of_money_in_account, 17, date_of_accrual);
+		date_of_accrual += int((time(NULL) - date_of_accrual) / 2592000) * 2592000;
+	}
 }
 
 //Конструктор кредитного счёта
@@ -447,21 +489,10 @@ void Credit_account::put_money(double size)
 		Amount_of_money_in_account += size;
 }
 
-//Credit_account::~Credit_account()
-//{
-//	std::cout << "Credacc\n";
-//}
-
-//Percentage_account::~Percentage_account()
-//{
-//	std::cout << "Peracc\n";
-//}
-
 int Interest_calculation(int money, int percent, int previous_date)
 {
-	if (time(NULL) - previous_date > 2592000)
-		for (int i = 1; i <= int((time(NULL) - previous_date) / 2592000); i++)
-			money += money * percent / 100 * 30 / 365;
+	for (int i = 1; i <= int((time(NULL) - previous_date) / 2592000); i++)
+		money += money * percent / 100 * 30 / 365;
 	return money;
 }
 

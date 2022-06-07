@@ -123,14 +123,15 @@ class Credit_account;
 //Класс "пользователь"
 class Personal_Account {
 private:
-	std::string Name;
-	std::string Surname;
-	std::string Personal_Number = "";
+	std::string Name = "", Surname = "", Personal_Number = "";
+	std::string History[8];
 	std::map <int, std::string> Consructor_code;
 	int Number_of_code;
-	//void SetAll(std::string, std::string, std::string, int);
 	std::map <std::string, Account_of_money*> Case_my_money;
+	void Fill_history(std::string);
 public:
+	void Out_history();
+	void Perevod(std::string, std::string, double);
 	Personal_Account(std::string, std::string);
 	Personal_Account();
 	bool Existence_of_an_account(std::string);
@@ -166,7 +167,6 @@ public:
 	virtual void take_money(double) = 0;
 	virtual void percentage() = 0;
 	std::string GetAccount_number(bool);
-	//~Account_of_money();
 };
 
 //Класс "текущий счёт"
@@ -179,8 +179,6 @@ public:
 	Current_account();
 	void take_money(double);
 	void put_money(double);
-	//~Current_account();
-	//Current_account& operator=(const Account_of_money*);
 };
 
 //Абстрактный класс для процентных счетов
@@ -191,7 +189,6 @@ public:
 	virtual void SetPrevious_date(std::string, int) {};
 	int GetDate_of_accrual();
 	virtual void percentage() = 0;
-	//~Percentage_account();
 };
 
 //Класс "депозитный счёт"
@@ -203,7 +200,6 @@ public:
 	Deposit_account();
 	void take_money(double);
 	void put_money(double);
-	//~Deposit_account();
 };
 
 //Класс "кредитный счёт"
@@ -212,9 +208,7 @@ private:
 	void percentage();
 public:
 	void SetPrevious_date(std::string, int);
-	//Credit_account(const Credit_account&);
 	Credit_account();
 	void take_money(double);
 	void put_money(double);
-	//~Credit_account();
 };
