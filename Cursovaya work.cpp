@@ -221,8 +221,8 @@ int main()
 			case '4': {
 				system("cls");
 				std::cout << "Какой счет вы желаете открыть:\n    1.Текущий счет\n    2.Депозитный счет\n    3.Кредитный счет\n";
-				std::string stream_stream = "00";
-				while (stream_stream.length() > 1 && (stream_stream[0] != '1' || stream_stream[0] != '2' || stream_stream[0] != '3')) {
+				std::string stream_stream = "0";
+				while (stream_stream.length() > 1 || (stream_stream[0] != '1' && stream_stream[0] != '2' && stream_stream[0] != '3')) {
 					std::cin >> stream_stream;
 					std::cin.clear();
 				}

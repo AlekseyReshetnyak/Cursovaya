@@ -31,9 +31,6 @@ inline char* TakeTime() {
 	tm timeinfo{};
 	localtime_s(&timeinfo, &seconds);
 	asctime_s(buffer, 32, &timeinfo);
-	/*month[0] = buffer[4];
-	month[1] = buffer[5];
-	month[2] = buffer[6];*/
 	std::string month_str;
 	month_str += buffer[4];
 	month_str += buffer[5];

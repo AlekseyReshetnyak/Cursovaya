@@ -267,6 +267,8 @@ Personal_Account& Personal_Account::operator=(Personal_Account& now)
 	Personal_Number = now.Personal_Number;
 	Number_of_code = now.Number_of_code;
 	Consructor_code = now.Consructor_code;
+	for (int i = 0; i < Number_of_code; i++)
+		delete Case_my_money[Consructor_code[i]];
 	std::string code;
 	for (int i = 0; i < Number_of_code; i++) {
 		code = now.Consructor_code[i];
@@ -333,7 +335,7 @@ Current_account::Current_account()
 	for (int i = 0; i < 7; i++)
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
-	delete buff;
+	delete[] buff;
 }
 
 //Взять деньги со счёта
@@ -393,7 +395,7 @@ Deposit_account::Deposit_account()
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
 	date_of_accrual = time(NULL);
-	delete buff;
+	delete[] buff;
 }
 
 //Взять деньги с депозитного счёта
@@ -442,7 +444,7 @@ Credit_account::Credit_account()
 		Account_number += new_buffer[i];
 	std::cout << Account_number << std::endl;
 	date_of_accrual = 0;
-	delete buff;
+	delete[] buff;
 }
 
 //Взять деньги с кредитного счёта
